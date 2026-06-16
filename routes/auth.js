@@ -2,6 +2,8 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const auth = require("../middleware/auth");
+
 
 const router = express.Router();
 
@@ -107,6 +109,33 @@ router.delete("/users/:id", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+router.get("/home", (req, res) => {
+  res.send("<h1>Welcome to Home Page</h1>");
+});
+
+
+router.get("/users/profile", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      message: "Profile fetched successfully",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 });
 
