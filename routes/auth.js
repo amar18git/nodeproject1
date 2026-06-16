@@ -52,7 +52,8 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({ message: "Login successful", token });
+    res.cookie("token", token);
+    res.redirect("/api/auth/home");
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
