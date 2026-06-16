@@ -121,7 +121,7 @@ router.get("/home", (req, res) => {
 router.get("/users/profile", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
-      .select("-password");
+      .select("-password -_id -__v");
 
     if (!user) {
       return res.status(404).json({
