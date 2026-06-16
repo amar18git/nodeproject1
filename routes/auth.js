@@ -53,7 +53,7 @@ router.post("/login", async (req, res) => {
     );
 
     res.cookie("token", token);
-    res.redirect("/api/auth/home");
+    res.redirect(`${req.baseUrl}/home`);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
