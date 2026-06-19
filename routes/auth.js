@@ -51,9 +51,9 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
-
+    
+    res.json({ message: "Login successful", token });
     res.cookie("token", token);
-    res.redirect(`${req.baseUrl}/home`);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
