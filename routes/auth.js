@@ -146,5 +146,62 @@ router.get("/users/profile", auth, async (req, res) => {
   }
 });
 
+router.put("/users/profile", auth, async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    const updateData = {};
+
+    // Update name
+    if (name) {
+      updateData.name = name;
+    }
+
+    // Update email
+    if (email) {
+      // Check if email already belongs to another user
+      const existingUser = await User.findOne({ email });
+
+      if (existingUser && existingUser._id.toString() !== req.user.id) {
+        return res.status(400).json({
+          message: "Email already in use",
+        });
+      }
+
+      updateData.email = email;
+    }
+
+    // Update password
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updateData.password = hashedPassword;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("-password -_id -__v");
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
 
 module.exports = router;
