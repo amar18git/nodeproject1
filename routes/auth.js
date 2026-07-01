@@ -68,7 +68,7 @@ router.post("/login", async (req, res) => {
 router.get("/users/profile", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
-      .select("-password -_id -__v");
+      .select("-password -__v");
 
     if (!user) {
       return res.status(404).json({
