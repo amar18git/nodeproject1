@@ -58,71 +58,12 @@ router.post("/login", async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "none"
     });
-    res.json({ message: "Login successful", token });
+    res.json({ message: "Login successful" });
 
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
-
-router.patch("/users/:id", async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-
-    const updateData = {};
-
-    if (name) updateData.name = name;
-    if (email) updateData.email = email;
-
-    if (password) {
-      updateData.password = await bcrypt.hash(password, 10);
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
-
-    res.json({
-      message: "User updated successfully",
-      user: updatedUser,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-router.delete("/users/:id", async (req, res) => {
-  try {
-    const deletedUser = await User.findByIdAndDelete(
-      req.params.id
-    );
-
-    if (!deletedUser) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
-
-    res.json({
-      message: "User deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-router.get("/home", (req, res) => {
-  res.send("<h1>Welcome to Home Page</h1>");
-});
-
 
 router.get("/users/profile", auth, async (req, res) => {
   try {
